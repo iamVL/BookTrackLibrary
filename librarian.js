@@ -243,6 +243,7 @@ function loadMemberManagement() {
 
 
 function loadTransactionManagement() {
+    console.log('Loading transactions...');
     fetch('backend/get_all_transactions.php')
         .then(response => response.json())
         .then(data => {

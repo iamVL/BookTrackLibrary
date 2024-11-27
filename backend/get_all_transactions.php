@@ -26,5 +26,15 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Process the transactions to convert book_ids and book_titles from strings to arrays
+foreach ($transactions as &$transaction) {
+    // Convert book_ids from "{1,2,3}" to ['1', '2', '3']
+    $transaction['book_ids'] = array_map('trim', explode(',', trim($transaction['book_ids'], '{}')));
+    
+    // Convert book_titles from "{Title1,Title2}" to ['Title1', 'Title2']
+    $transaction['book_titles'] = array_map('trim', explode(',', trim($transaction['book_titles'], '{}')));
+}
+unset($transaction); // Unset reference
+
 echo json_encode($transactions);
 ?>
