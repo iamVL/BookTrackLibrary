@@ -1,287 +1,339 @@
 // script.js
 
-// Logout Function
-function logout() {
-    window.location.href = 'backend/logout.php';
-}
-
-// Search Books
-function searchBooks() {
-    const query = document.getElementById('searchInput').value;
-    const searchBy = document.getElementById('searchBy').value;
-
-    if (query.trim() === '') {
-        alert('Please enter a search query.');
-        return;
+(function() {
+    // Logout Function
+    function logout() {
+        window.location.href = 'backend/logout.php';
     }
 
-    fetch(`backend/member_functions.php?action=search_books&query=${encodeURIComponent(query)}&search_by=${searchBy}`)
-        .then(response => response.json())
-        .then(data => {
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '';
+    window.logout = logout;
 
-            if (data.error) {
-                resultsDiv.innerHTML = `<p class="error">${data.error}</p>`;
-                return;
-            }
+    // Search Books
+    function searchBooks() {
+        const query = document.getElementById('searchInput').value;
+        const searchBy = document.getElementById('searchBy').value;
 
-            if (data.length === 0) {
-                resultsDiv.innerHTML = '<p>No books found.</p>';
-                return;
-            }
-
-            data.forEach(book => {
-                const bookDiv = document.createElement('div');
-                bookDiv.innerHTML = `
-                    <h3>${book.title} by ${book.author}</h3>
-                    <p>Genre: ${book.genre}</p>
-                    <p>ISBN: ${book.isbn}</p>
-                    <p>Available Copies: ${book.available_copies}</p>
-                    <button onclick="addToWishlist(${book.book_id})">Add to Wishlist</button>
-                    <button onclick="leaveReview(${book.book_id})">Leave a Review</button>
-                    ${book.available_copies == 0 ? `<button onclick="reserveBook(${book.book_id})">Reserve Book</button>` : ''}
-                `;
-                resultsDiv.appendChild(bookDiv);
+        if (query.trim() === '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Search Query',
+                text: 'Please enter a search query.'
             });
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Add to Wishlist
-function addToWishlist(bookId) {
-    fetch('backend/member_functions.php?action=add_to_wishlist', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({book_id: bookId})
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.success);
-        } else if (data.error) {
-            alert(data.error);
+            return;
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
 
-// View Wishlist
-function viewWishlist() {
-    fetch('backend/member_functions.php?action=view_wishlist')
-        .then(response => response.json())
-        .then(data => {
-            const wishlistDiv = document.getElementById('wishlist');
-            wishlistDiv.innerHTML = '';
+        fetch(`backend/member_functions.php?action=search_books&query=${encodeURIComponent(query)}&search_by=${searchBy}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('searchResults');
+                resultsDiv.innerHTML = '';
 
-            if (data.error) {
-                wishlistDiv.innerHTML = `<p class="error">${data.error}</p>`;
-                return;
-            }
+                if (data.error) {
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
+                }
 
-            if (data.length === 0) {
-                wishlistDiv.innerHTML = '<p>Your wishlist is empty.</p>';
-                return;
-            }
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = '<p>No books found.</p>';
+                    return;
+                }
 
-            data.forEach(book => {
-                const bookDiv = document.createElement('div');
-                bookDiv.innerHTML = `
-                    <h3>${book.title} by ${book.author}</h3>
-                    <p>Genre: ${book.genre}</p>
-                    <p>ISBN: ${book.isbn}</p>
-                    <p>Added on: ${book.added_date}</p>
-                `;
-                wishlistDiv.appendChild(bookDiv);
-            });
-        })
-        .catch(error => console.error('Error:', error));
-}
+                data.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.classList.add('card', 'mb-3');
 
-// Load Borrowing History
-function loadBorrowingHistory() {
-    fetch('backend/member_functions.php?action=load_borrowing_history')
-        .then(response => response.json())
-        .then(data => {
-            const historyDiv = document.getElementById('borrowingHistory');
-            historyDiv.innerHTML = '';
-
-            if (data.error) {
-                historyDiv.innerHTML = `<p class="error">${data.error}</p>`;
-                return;
-            }
-
-            if (data.length === 0) {
-                historyDiv.innerHTML = '<p>You have no borrowing history.</p>';
-                return;
-            }
-
-            data.forEach(record => {
-                const recordDiv = document.createElement('div');
-                recordDiv.innerHTML = `
-                    <h3>${record.title} by ${record.author}</h3>
-                    <p>Borrowed on: ${record.borrow_date}</p>
-                    <p>Due on: ${record.due_date}</p>
-                    <p>Returned on: ${record.return_date ? record.return_date : 'Not returned yet'}</p>
-                    <p>Fine: $${record.fine}</p>
-                `;
-                historyDiv.appendChild(recordDiv);
-            });
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Leave Review
-function leaveReview(bookId) {
-    const rating = prompt('Enter your rating (1-5):');
-    const review_text = prompt('Enter your review:');
-
-    if (!rating || rating < 1 || rating > 5) {
-        alert('Invalid rating');
-        return;
+                    bookCard.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">${book.title} by ${book.author}</h5>
+                            <p class="card-text">Genre: ${book.genre || 'N/A'}</p>
+                            <p class="card-text">ISBN: ${book.isbn}</p>
+                            <p class="card-text">Available Copies: ${book.available_copies}</p>
+                            <button class="btn btn-primary btn-sm" onclick="addToWishlist(${book.book_id})">
+                                <i class="fas fa-heart"></i> Add to Wishlist
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="leaveReview(${book.book_id})">
+                                <i class="fas fa-pencil-alt"></i> Leave a Review
+                            </button>
+                            ${book.available_copies == 0 ? `<button class="btn btn-warning btn-sm" onclick="reserveBook(${book.book_id})">
+                            <i class="fas fa-bookmark"></i> Reserve Book</button>` : ''}
+                        </div>
+                    `;
+                    resultsDiv.appendChild(bookCard);
+                });
+            })
+            .catch(error => console.error('Error:', error));
     }
 
-    fetch('backend/member_functions.php?action=leave_review', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({book_id: bookId, rating: rating, review_text: review_text})
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.success);
-        } else if (data.error) {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
+    window.searchBooks = searchBooks;
 
-// Reserve Book
-function reserveBook(bookId) {
-    fetch('backend/member_functions.php?action=reserve_book', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({book_id: bookId})
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.success);
-        } else if (data.error) {
-            alert(data.error);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-// Load Notifications
-function loadNotifications() {
-    fetch('backend/member_functions.php?action=get_notifications')
+    // Add to Wishlist
+    window.addToWishlist = function(bookId) {
+        fetch('backend/member_functions.php?action=add_to_wishlist', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({book_id: bookId})
+        })
         .then(response => response.json())
         .then(data => {
-            const notificationsDiv = document.getElementById('notifications');
-            notificationsDiv.innerHTML = '';
-
-            if (data.length === 0) {
-                notificationsDiv.innerHTML = '<p>No notifications.</p>';
-                return;
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Wishlist',
+                    text: data.success,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else if (data.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
             }
-
-            data.forEach(notification => {
-                const notificationDiv = document.createElement('div');
-                notificationDiv.innerHTML = `<p>${notification.message}</p>`;
-                notificationsDiv.appendChild(notificationDiv);
-            });
         })
         .catch(error => console.error('Error:', error));
-}
+    };
 
-// Fetch Book Details
-function loadBookDetails() {
-    const params = new URLSearchParams(window.location.search);
-    const bookId = params.get('book_id');
+    // View Wishlist
+    window.viewWishlist = function() {
+        fetch('backend/member_functions.php?action=view_wishlist')
+            .then(response => response.json())
+            .then(data => {
+                const wishlistDiv = document.getElementById('wishlist');
+                wishlistDiv.innerHTML = '';
 
-    if (!bookId) {
-        document.getElementById('bookDetails').innerHTML = '<p>Book ID not provided.</p>';
-        return;
+                if (data.error) {
+                    wishlistDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
+                }
+
+                if (data.length === 0) {
+                    wishlistDiv.innerHTML = '<p>Your wishlist is empty.</p>';
+                    return;
+                }
+
+                data.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.classList.add('card', 'mb-3');
+
+                    bookCard.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">${book.title} by ${book.author}</h5>
+                            <p class="card-text">Genre: ${book.genre || 'N/A'}</p>
+                            <p class="card-text">ISBN: ${book.isbn}</p>
+                            <p class="card-text">Added on: ${book.added_date}</p>
+                        </div>
+                    `;
+                    wishlistDiv.appendChild(bookCard);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    };
+
+    // Load Current Loans
+    function loadCurrentLoans() {
+        fetch('backend/member_functions.php?action=load_current_loans')
+            .then(response => response.json())
+            .then(data => {
+                const loansDiv = document.getElementById('currentLoans');
+                loansDiv.innerHTML = '';
+
+                if (data.error) {
+                    loansDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
+                }
+
+                if (data.length === 0) {
+                    loansDiv.innerHTML = '<p>You have no current loans.</p>';
+                    return;
+                }
+
+                let table = `<table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Book ID</th>
+                            <th>Title</th>
+                            <th>Borrowed On</th>
+                            <th>Due On</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.forEach(loan => {
+                    table += `
+                        <tr>
+                            <td>${loan.transaction_id}</td>
+                            <td>${loan.book_id}</td>
+                            <td>${loan.title}</td>
+                            <td>${loan.borrow_date}</td>
+                            <td>${loan.due_date}</td>
+                        </tr>
+                    `;
+                });
+
+                table += '</tbody></table>';
+                loansDiv.innerHTML = table;
+            })
+            .catch(error => console.error('Error:', error));
     }
 
-    fetch(`backend/get_book_details.php?book_id=${bookId}`)
+    // Load Borrowing History
+    function loadBorrowingHistory() {
+        fetch('backend/member_functions.php?action=load_borrowing_history')
+            .then(response => response.json())
+            .then(data => {
+                const historyDiv = document.getElementById('borrowingHistory');
+                historyDiv.innerHTML = '';
+
+                if (data.error) {
+                    historyDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    return;
+                }
+
+                if (data.length === 0) {
+                    historyDiv.innerHTML = '<p>You have no borrowing history.</p>';
+                    return;
+                }
+
+                let table = `<table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Book ID</th>
+                            <th>Title</th>
+                            <th>Borrowed On</th>
+                            <th>Due On</th>
+                            <th>Returned On</th>
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.forEach(record => {
+                    table += `
+                        <tr>
+                            <td>${record.transaction_id}</td>
+                            <td>${record.book_id}</td>
+                            <td>${record.title}</td>
+                            <td>${record.borrow_date}</td>
+                            <td>${record.due_date}</td>
+                            <td>${record.return_date || 'Not returned yet'}</td>
+                            <td>$${record.fine || '0.00'}</td>
+                        </tr>
+                    `;
+                });
+
+                table += '</tbody></table>';
+                historyDiv.innerHTML = table;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Leave Review
+    window.leaveReview = function(bookId) {
+        Swal.fire({
+            title: 'Leave a Review',
+            html:
+                `<input type="number" id="rating" class="swal2-input" placeholder="Rating (1-5)" min="1" max="5">
+                <textarea id="review_text" class="swal2-textarea" placeholder="Your review"></textarea>`,
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            focusConfirm: false,
+            preConfirm: () => {
+                const rating = document.getElementById('rating').value;
+                const review_text = document.getElementById('review_text').value;
+                if (!rating || rating < 1 || rating > 5) {
+                    Swal.showValidationMessage('Please enter a valid rating between 1 and 5');
+                }
+                return { rating: rating, review_text: review_text };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { rating, review_text } = result.value;
+                fetch('backend/member_functions.php?action=leave_review', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({book_id: bookId, rating: rating, review_text: review_text})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Review Submitted',
+                            text: data.success,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else if (data.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.error
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    };
+
+    // Reserve Book
+    window.reserveBook = function(bookId) {
+        fetch('backend/member_functions.php?action=reserve_book', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({book_id: bookId})
+        })
         .then(response => response.json())
         .then(data => {
-            const detailsDiv = document.getElementById('bookDetails');
-
-            if (data.error) {
-                detailsDiv.innerHTML = `<p class="error">${data.error}</p>`;
-                return;
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Book Reserved',
+                    text: data.success,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else if (data.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error
+                });
             }
-
-            detailsDiv.innerHTML = `
-                <h2>${data.title}</h2>
-                <p><strong>Author:</strong> ${data.author}</p>
-                <p><strong>Genre:</strong> ${data.genre}</p>
-                <p><strong>ISBN:</strong> ${data.isbn}</p>
-                <p><strong>Total Copies:</strong> ${data.total_copies}</p>
-                <p><strong>Available Copies:</strong> ${data.available_copies}</p>
-                <!-- Add more details and actions as needed -->
-            `;
         })
         .catch(error => console.error('Error:', error));
-}
+    };
 
-// Load Current Loans
-function loadCurrentLoans() {
-    fetch('backend/member_functions.php?action=load_current_loans')
-        .then(response => response.json())
-        .then(data => {
-            const loansDiv = document.getElementById('currentLoans');
-            loansDiv.innerHTML = '';
+    // Load Notifications
+    function loadNotifications() {
+        fetch('backend/member_functions.php?action=get_notifications')
+            .then(response => response.json())
+            .then(data => {
+                const notificationsDiv = document.getElementById('notifications');
+                notificationsDiv.innerHTML = '';
 
-            if (data.error) {
-                loansDiv.innerHTML = `<p class="error">${data.error}</p>`;
-                return;
-            }
+                if (data.length === 0) {
+                    notificationsDiv.innerHTML = '<p>No notifications.</p>';
+                    return;
+                }
 
-            if (data.length === 0) {
-                loansDiv.innerHTML = '<p>You have no current loans.</p>';
-                return;
-            }
+                data.forEach(notification => {
+                    const notificationDiv = document.createElement('div');
+                    notificationDiv.classList.add('alert', notification.type === 'due_soon' ? 'alert-warning' : 'alert-danger');
+                    notificationDiv.innerHTML = `<p>${notification.message}</p>`;
+                    notificationsDiv.appendChild(notificationDiv);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-            let table = `<table>
-                <tr>
-                    <th>Transaction ID</th>
-                    <th>Book ID</th>
-                    <th>Title</th>
-                    <th>Borrowed On</th>
-                    <th>Due On</th>
-                </tr>`;
-
-            data.forEach(loan => {
-                table += `
-                    <tr>
-                        <td>${loan.transaction_id}</td>
-                        <td>${loan.book_id}</td>
-                        <td>${loan.title}</td>
-                        <td>${loan.borrow_date}</td>
-                        <td>${loan.due_date}</td>
-                    </tr>
-                `;
-            });
-
-            table += '</table>';
-            loansDiv.innerHTML = table;
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// On Page Load
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.endsWith('member_dashboard.php')) {
+    // On Page Load
+    document.addEventListener('DOMContentLoaded', () => {
         loadNotifications();
         loadCurrentLoans();
         loadBorrowingHistory();
-    } else if (window.location.pathname.endsWith('book_details.php')) {
-        loadBookDetails();
-    }
-});
+    });
+})();

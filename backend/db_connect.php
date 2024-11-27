@@ -3,8 +3,8 @@
 
 $host = 'localhost';
 $db = 'booktrack_library';
-$user = 'sathwin';        // Your PostgreSQL username
-$password = 'sathwin';    // Your PostgreSQL password
+$user = 'sathwin';    
+$password = 'sathwin'; 
 
 try {
     $dsn = "pgsql:host=$host;port=5432;dbname=$db;";
