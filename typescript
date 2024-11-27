@@ -1,0 +1,157 @@
+Script started on Tue Nov 26 15:07:03 2024
+[1m[7m%[27m[1m[0m                                                                                ]7;file://mac.dhcp.asu.edu/Users/sathwinreddyjulakanti/BookTrackLibrary[0m[27m[24m[Jsathwinreddyjulakanti@mac BookTrackLibrary % [K[?2004hnpm start      n  cclear[?2004l
+[3J[H[2J[1m[7m%[27m[1m[0m                                                                                ]7;file://mac.dhcp.asu.edu/Users/sathwinreddyjulakanti/BookTrackLibrary[0m[27m[24m[Jsathwinreddyjulakanti@mac BookTrackLibrary % [K[?2004hlls[?2004l
+backend			librarian.js		script.js
+book_details.php	librarian_dashboard.php	styles.css
+index.php		member_dashboard.php	typescript
+[1m[7m%[27m[1m[0m                                                                                ]7;file://mac.dhcp.asu.edu/Users/sathwinreddyjulakanti/BookTrackLibrary[0m[27m[24m[Jsathwinreddyjulakanti@mac BookTrackLibrary % [K[?2004hsscript[1m [0m[0m .js[?2004l
+zsh: command not found: script.js
+[1m[7m%[27m[1m[0m                                                                                ]7;file://mac.dhcp.asu.edu/Users/sathwinreddyjulakanti/BookTrackLibrary[0m[27m[24m[Jsathwinreddyjulakanti@mac BookTrackLibrary % [K[?2004hccat script.js[1m [0m[0m [?2004l
+// script.js
+
+// Logout Function
+function logout() {
+    window.location.href = 'backend/logout.php';
+}
+
+// Search Books
+function searchBooks() {
+    const query = document.getElementById('searchInput').value;
+    const searchBy = document.getElementById('searchBy').value;
+
+    if (query.trim() === '') {
+        alert('Please enter a search query.');
+        return;
+    }
+
+    fetch(`backend/member_functions.php?action=search_books&query=${encodeURIComponent(query)}&search_by=${searchBy}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '';
+
+            if (data.error) {
+                resultsDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                resultsDiv.innerHTML = '<p>No books found.</p>';
+                return;
+            }
+
+            data.forEach(book => {
+                const bookDiv = document.createElement('div');
+                bookDiv.innerHTML = `
+                    <h3>${book.title} by ${book.author}</h3>
+                    <p>Genre: ${book.genre}</p>
+                    <p>ISBN: ${book.isbn}</p>
+                    <p>Available Copies: ${book.available_copies}</p>
+                    <button onclick="addToWishlist(${book.book_id})">Add to Wishlist</button>
+                `;
+                resultsDiv.appendChild(bookDiv);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Add to Wishlist
+function addToWishlist(bookId) {
+    fetch('backend/member_functions.php?action=add_to_wishlist', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({book_id: bookId})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.success);
+        } else if (data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// View Wishlist
+function viewWishlist() {
+    fetch('backend/member_functions.php?action=view_wishlist')
+        .then(response => response.json())
+        .then(data => {
+            const wishlistDiv = document.getElementById('wishlist');
+            wishlistDiv.innerHTML = '';
+
+            if (data.error) {
+                wishlistDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                wishlistDiv.innerHTML = '<p>Your wishlist is empty.</p>';
+                return;
+            }
+
+            data.forEach(book => {
+                const bookDiv = document.createElement('div');
+                bookDiv.innerHTML = `
+                    <h3>${book.title} by ${book.author}</h3>
+                    <p>Genre: ${book.genre}</p>
+                    <p>ISBN: ${book.isbn}</p>
+                    <p>Added on: ${book.added_date}</p>
+                `;
+                wishlistDiv.appendChild(bookDiv);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Borrowing History (To be implemented)
+function loadBorrowingHistory() {
+    // Implement AJAX call to fetch and display borrowing history
+}
+
+// On Page Load, load borrowing history
+document.addEventListener('DOMContentLoaded', () => {
+    loadBorrowingHistory();
+});
+
+// Fetch Book Details
+function loadBookDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('book_id');
+
+    if (!bookId) {
+        document.getElementById('bookDetails').innerHTML = '<p>Book ID not provided.</p>';
+        return;
+    }
+
+    fetch(`backend/get_book_details.php?book_id=${bookId}`)
+        .then(response => response.json())
+        .then(data => {
+            const detailsDiv = document.getElementById('bookDetails');
+
+            if (data.error) {
+                detailsDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                return;
+            }
+
+            detailsDiv.innerHTML = `
+                <h2>${data.title}</h2>
+                <p><strong>Author:</strong> ${data.author}</p>
+                <p><strong>Genre:</strong> ${data.genre}</p>
+                <p><strong>ISBN:</strong> ${data.isbn}</p>
+                <p><strong>Total Copies:</strong> ${data.total_copies}</p>
+                <p><strong>Available Copies:</strong> ${data.available_copies}</p>
+                <!-- Add more details and actions as needed -->
+            `;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// On Page Load, load book details if on book_details.php
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.pathname.endsWith('book_details.php')) {
+        loadBookDetails();
+    }
+});
+[1m[7m%[27m[1m[0m                                                                                ]7;file://mac.dhcp.asu.edu/Users/sathwinreddyjulakanti/BookTrackLibrary[0m[27m[24m[Jsathwinreddyjulakanti@mac BookTrackLibrary % [K[?2004h
