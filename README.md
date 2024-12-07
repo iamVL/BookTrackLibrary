@@ -37,10 +37,10 @@ BookTrack Library is a web-based application for managing library operations, in
    - Update `backend/db_connect.php` with your database credentials.
 
 4. **Run the Application**
-
+   - Start the application `php -S localhost:8000` 
    - Navigate to `http://localhost/BookTrackLibrary/index.php` in your web browser.
 
-5. **Login Credentials**
+6. **Login Credentials**
 
    - **Librarian:**
      - Username: `admin`
