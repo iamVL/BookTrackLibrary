@@ -38,7 +38,7 @@ BookTrack Library is a web-based application for managing library operations, in
 
 4. **Run the Application**
    - Start the application `php -S localhost:8000` 
-   - Navigate to `http://localhost/BookTrackLibrary/index.php` in your web browser.
+   - Navigate to `http://localhost:8000/index.php` in your web browser.
 
 6. **Login Credentials**
 
