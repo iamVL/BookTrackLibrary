@@ -48,9 +48,3 @@ BookTrack Library is a web-based application for managing library operations, in
    - **Member:**
      - Username: `john_doe`
      - Password: `password123`
-
-## Additional Notes
-
-- Ensure that your PHP installation has the PDO extension for PostgreSQL enabled.
-- If you encounter any issues, please refer to the documentation or contact the developer.
-
