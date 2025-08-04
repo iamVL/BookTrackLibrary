@@ -1,50 +1,92 @@
-# BookTrack Library Management System
+# 📚 BookTrack Library Management System
 
-## Introduction
+A full-stack web application to manage library workflows — track book inventory, manage members, and streamline borrowing/returning. Built to minimize manual errors and cut search latency.
 
-BookTrack Library is a web-based application for managing library operations, including book inventory, member management, transactions, and more.
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-## Prerequisites
+---
 
-- PHP 7.x or higher
-- PostgreSQL 9.x or higher
-- Web server (e.g., Apache)
-- Web browser
+## ✨ Features
 
-## Setup Instructions
+- 🔐 **Login portal** for Librarians and Members  
+- 🔍 **Real-time search** and filter by book titles, authors, or availability  
+- 🔄 **Borrow & return tracking**, with timestamped transaction logs  
+- 🧾 Librarian dashboard for full inventory + member access  
+- 👤 Member dashboard to view borrowed books + due dates  
+- 🧹 Optimized PostgreSQL schema for fast lookups and record updates  
 
-1. **Clone the Repository or Copy Files**
+---
 
-   Copy all project files to your web server directory (e.g., `htdocs/BookTrackLibrary`).
+## 🚀 Tech Stack
 
-2. **Set Up the Database**
+| Frontend         | Backend         | Database   |
+|------------------|------------------|------------|
+| HTML, CSS, JS    | PHP, REST APIs   | PostgreSQL |
 
-   - **Create Database and User:**
+---
 
-     ```sql
-     CREATE ROLE your_username WITH LOGIN PASSWORD 'your_password';
-     CREATE DATABASE booktrack_library WITH OWNER your_username;
-     ```
+## 🛠 Setup Instructions
 
-   - **Restore Database from Dump:**
+### ✅ Prerequisites
 
-     ```bash
-     pg_restore -U your_username -d booktrack_library path/to/booktrack_library_backup.sqlc
-     ```
+- PHP 7.x or higher  
+- PostgreSQL 9.x or higher  
+- Localhost server (XAMPP / WAMP / php -S)  
+- Web browser  
 
-3. **Configure Database Connection**
+### ⚙️ Installation
+# ⚙️ Installation & Setup Guide
 
-   - Update `backend/db_connect.php` with your database credentials.
+# 📦 Prerequisites
+# - PHP 7.x or higher
+# - PostgreSQL 9.x or higher
+# - Web server (e.g., Apache or built-in PHP server)
+# - Modern web browser
 
-4. **Run the Application**
-   - Start the application `php -S localhost:8000` 
-   - Navigate to `http://localhost:8000/index.php` in your web browser.
+# 🧾 1. Clone the Repository
+git clone https://github.com/iamVL/BookTrackLibrary.git
+cd BookTrackLibrary
 
-6. **Login Credentials**
+# 🗃️ 2. Set Up the Database
+# In your PostgreSQL terminal:
+CREATE ROLE your_username WITH LOGIN PASSWORD 'your_password';
+CREATE DATABASE booktrack_library WITH OWNER your_username;
+pg_restore -U your_username -d booktrack_library booktrack_library_backup.sqlc
 
-   - **Librarian:**
-     - Username: `admin`
-     - Password: `adminpass`
-   - **Member:**
-     - Username: `john_doe`
-     - Password: `password123`
+# 🛠️ 3. Configure DB Connection
+# Update backend/db_connect.php with:
+$conn = pg_connect("host=localhost dbname=booktrack_library user=your_username password=your_password");
+
+# 🚀 4. Run the App Locally
+php -S localhost:8000
+
+# Then open your browser at:
+# http://localhost:8000/index.php
+
+
+## 🔐 Demo Credentials
+
+### 🧑‍🏫 Librarian
+- **Username:** `admin`  
+- **Password:** `adminpass`
+
+### 🧑‍🎓 Member
+- **Username:** `john_doe`  
+- **Password:** `password123`
+
+---
+
+
+## 🧑‍💻 Team
+
+- **Vaishnavi Lokhande** – Full Stack Dev, PostgreSQL Optimization  
+- **Sathwin** – UI + PHP Backend  
+---
+
+## 📄 License
+
+MIT License © 2025  
+Feel free to fork, star ⭐ and use!
