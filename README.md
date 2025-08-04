@@ -42,43 +42,43 @@ A full-stack web application to manage library workflows — track book inventor
 ---
 ## ⚙️ Installation & Setup Guide
 
-### 📁 1. Clone the Repository
+## 📁 1. Clone the Repository
 
 ```bash
 git clone https://github.com/iamVL/BookTrackLibrary.git
 cd BookTrackLibrary
 ```
 
-# 🗃️ 2. Set Up the Database
-# In your PostgreSQL terminal:
+## 🗃️ 2. Set Up the Database
+## In your PostgreSQL terminal:
 ```bash
 CREATE ROLE your_username WITH LOGIN PASSWORD 'your_password';
 CREATE DATABASE booktrack_library WITH OWNER your_username;
 pg_restore -U your_username -d booktrack_library booktrack_library_backup.sqlc
 ```
 
-# 🛠️ 3. Configure DB Connection
-# Update backend/db_connect.php with:
+## 🛠️ 3. Configure DB Connection
+## Update backend/db_connect.php with:
 ```bash
 $conn = pg_connect("host=localhost dbname=booktrack_library user=your_username password=your_password");
 ```
 
-# 🚀 4. Run the App Locally
+## 🚀 4. Run the App Locally
 ```bash
 php -S localhost:8000
 ```
-# Then open your browser at:
+## Then open your browser at:
 ```bash
-# http://localhost:8000/index.php
+ http://localhost:8000/index.php
 ```
 
-# 🔐 Demo Credentials
+## 🔐 Demo Credentials
 
-# 🧑‍🏫 Librarian
+## 🧑‍🏫 Librarian
 - Username:`admin`  
 - Password: `adminpass`
 
-# 🧑‍🎓 Member
+## 🧑‍🎓 Member
 - Username: `john_doe`  
 - Password: `password123`
 
