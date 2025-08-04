@@ -28,54 +28,59 @@ A full-stack web application to manage library workflows — track book inventor
 
 ---
 
-## 🛠 Setup Instructions
+## 🛠️ Setup Instructions
+
+---
 
 ### ✅ Prerequisites
 
 - PHP 7.x or higher  
 - PostgreSQL 9.x or higher  
-- Localhost server (XAMPP / WAMP / php -S)  
-- Web browser  
+- Web server (e.g., Apache, XAMPP, or built-in PHP server)  
+- Modern web browser  
 
-### ⚙️ Installation
-# ⚙️ Installation & Setup Guide
+---
+## ⚙️ Installation & Setup Guide
 
-# 📦 Prerequisites
-# - PHP 7.x or higher
-# - PostgreSQL 9.x or higher
-# - Web server (e.g., Apache or built-in PHP server)
-# - Modern web browser
+### 📁 1. Clone the Repository
 
-# 🧾 1. Clone the Repository
+```bash
 git clone https://github.com/iamVL/BookTrackLibrary.git
 cd BookTrackLibrary
+```
 
 # 🗃️ 2. Set Up the Database
 # In your PostgreSQL terminal:
+```bash
 CREATE ROLE your_username WITH LOGIN PASSWORD 'your_password';
 CREATE DATABASE booktrack_library WITH OWNER your_username;
 pg_restore -U your_username -d booktrack_library booktrack_library_backup.sqlc
+```
 
 # 🛠️ 3. Configure DB Connection
 # Update backend/db_connect.php with:
+```bash
 $conn = pg_connect("host=localhost dbname=booktrack_library user=your_username password=your_password");
+```
 
 # 🚀 4. Run the App Locally
+```bash
 php -S localhost:8000
-
+```
 # Then open your browser at:
+```bash
 # http://localhost:8000/index.php
+```
 
+# 🔐 Demo Credentials
 
-## 🔐 Demo Credentials
+# 🧑‍🏫 Librarian
+- Username:`admin`  
+- Password: `adminpass`
 
-### 🧑‍🏫 Librarian
-- **Username:** `admin`  
-- **Password:** `adminpass`
-
-### 🧑‍🎓 Member
-- **Username:** `john_doe`  
-- **Password:** `password123`
+# 🧑‍🎓 Member
+- Username: `john_doe`  
+- Password: `password123`
 
 ---
 
